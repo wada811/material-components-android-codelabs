@@ -29,12 +29,17 @@ class ProductGridFragment : Fragment() {
 
         // Set up the RecyclerView
         view.recycler_view.setHasFixedSize(true)
-        view.recycler_view.layoutManager = GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
-        val adapter = ProductCardRecyclerViewAdapter(
-                ProductEntry.initProductEntryList(resources))
+        view.recycler_view.layoutManager = GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false).also {
+            it.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    return if (position % 3 == 2) 2 else 1
+                }
+            }
+        }
+        val adapter = ProductCardRecyclerViewAdapter(ProductEntry.initProductEntryList(resources))
         view.recycler_view.adapter = adapter
-        val largePadding = resources.getDimensionPixelSize(R.dimen.shr_product_grid_spacing)
-        val smallPadding = resources.getDimensionPixelSize(R.dimen.shr_product_grid_spacing_small)
+        val largePadding = resources.getDimensionPixelSize(R.dimen.shr_staggered_product_grid_spacing_large)
+        val smallPadding = resources.getDimensionPixelSize(R.dimen.shr_staggered_product_grid_spacing_small)
         view.recycler_view.addItemDecoration(ProductGridItemDecoration(largePadding, smallPadding))
 
         return view;
